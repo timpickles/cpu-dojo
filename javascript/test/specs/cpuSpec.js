@@ -233,6 +233,34 @@ describe('CPU', function() {
 
             expect(cpu.registers.programCounter).to.equal(6);
         });
+
+        it('JSR: should jump to location specified in the next memory address and add the current program counter - 1 to the stack', function() {
+            var cpu = new CPU(50);
+
+            cpu.registers.programCounter = 3;
+
+            cpu.loadProgram([0, 0, 0, 11, 9]);
+            cpu.execute();
+
+            expect(cpu.registers.programCounter).to.equal(10);
+            expect(cpu.registers.stackPointer).to.equal(cpu.memory.length - 2);
+            expect(cpu.memory[cpu.memory.length - 1]).to.equal(3);
+        });
+
+
+        it('RTS: should pop the stack and set the program counter to that value - 1', function() {
+            var cpu = new CPU(50);
+
+            cpu.registers.programCounter = 3;
+            cpu.memory[cpu.memory.length - 1] = 0;
+            cpu.registers.stackPointer = cpu.memory.length - 2;
+
+            cpu.loadProgram([0, 0, 0, 12]);
+            cpu.execute();
+
+            expect(cpu.registers.programCounter).to.equal(1);
+            expect(cpu.registers.stackPointer).to.equal(cpu.memory.length - 1);
+        });
     });
 
     describe('Programs', function() {

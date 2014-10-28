@@ -14,7 +14,8 @@ function CPU(memorySize) {
         y: 0,
         flags: {
             equal: false
-        }
+        },
+        stackPointer: memorySize - 1
     };
 }
 
@@ -102,6 +103,19 @@ CPU.prototype.execute = function() {
                 // LDY
                 this.advanceProgramCounter();
                 this.registers.y = this.readMemory();
+                break;
+            case 11:
+                // JSR
+                this.memory[this.registers.stackPointer] = this.registers.programCounter;
+                this.registers.stackPointer--;
+
+                this.advanceProgramCounter();
+                this.registers.programCounter = this.readMemory() - 1;
+                break;
+            case 12:
+                // RTS
+                this.registers.stackPointer++;
+                this.registers.programCounter = this.memory[this.registers.stackPointer] - 1;
                 break;
             default:
                 throw new Error('Unknown operation');
