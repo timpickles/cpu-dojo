@@ -158,5 +158,20 @@ describe('Assembler', function() {
                 0
             ]);
         });
+
+        it('should use labels for branching', function() {
+            var code = [
+                'LDY 3',
+                ':loop',
+                '  DEY',
+                '  CMY 0',
+                '  BNE loop',
+                'BRK'
+            ].join('\n');
+
+            var machineCode = assembler.assemble(code);
+
+            expect(machineCode).to.deep.equal([10, 3, 9, 6, 0, 7, -5, 0]);
+        });
     });
 });
