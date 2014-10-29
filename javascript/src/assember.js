@@ -1,4 +1,4 @@
-var Assembler = (function() {
+var Assembler = function() {
     var blankLineRegEx = /^\s*$/,
         operationRegEx = /^\s*(\w+)(?:\s+([\d\w-]+))?\s*$/,
         labelRegEx = /^\s*(\w[\w\d]+):\s*$/,
@@ -103,4 +103,4 @@ var Assembler = (function() {
             return machineCode;
         }
     }
-});
+};
