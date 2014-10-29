@@ -264,6 +264,15 @@ describe('CPU', function() {
     });
 
     describe('Programs', function() {
+        it ('should add 10 to A register using subroutines', function() {
+            var cpu = new CPU(256);
+
+            cpu.loadProgram([1, 10, 11, 5, 0, 2, 10, 12]);
+            cpu.execute();
+
+            expect(cpu.registers.a).to.equal(20);
+        });
+
         it ('should write "who let the dogs out who who who " to the memory from address 128 onwards', function() {
             var cpu = new CPU(256),
                 expectedMessage = 'who let the dogs out who who who ';
