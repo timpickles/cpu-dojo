@@ -248,7 +248,7 @@ describe('CPU', function() {
         });
 
 
-        it('RTS: should pop the stack and set the program counter to that value - 1', function() {
+        it('RTS: should pop the stack and set the program counter to that value + 1', function() {
             var cpu = new CPU(50);
 
             cpu.registers.programCounter = 3;
@@ -258,7 +258,7 @@ describe('CPU', function() {
             cpu.loadProgram([0, 0, 0, 12]);
             cpu.execute();
 
-            expect(cpu.registers.programCounter).to.equal(1);
+            expect(cpu.registers.programCounter).to.equal(3);
             expect(cpu.registers.stackPointer).to.equal(cpu.memory.length - 1);
         });
     });
@@ -269,6 +269,27 @@ describe('CPU', function() {
                 expectedMessage = 'who let the dogs out who who who ';
 
             cpu.loadProgram([4, 128, 1, 0x77, 8, 5, 1, 0x68, 8, 5, 1, 0x6F, 8, 5, 1, 0x20, 8, 5, 1, 0x6c, 8, 5, 1, 0x65, 8, 5, 1, 0x74, 8, 5, 1, 0x20, 8, 5, 1, 0x74, 8, 5, 1, 0x68, 8, 5, 1, 0x65, 8, 5, 1, 0x20, 8, 5, 1, 0x64, 8, 5, 1, 0x6F, 8, 5, 1, 0x67, 8, 5, 1, 0x73, 8, 5, 1, 0x20, 8, 5, 1, 0x6F, 8, 5, 1, 0x75, 8, 5, 1, 0x74, 8, 5, 1, 0x20, 8, 5, 10, 3, 1, 0x77, 8, 5, 1, 0x68, 8, 5, 1, 0x6F, 8, 5, 1, 0x20, 8, 5, 9, 6, 0, 7, -21, 0]);
+            cpu.execute();
+
+            var message = '',
+                value;
+            for (var i = 128; i < 255; i++) {
+                value = cpu.memory[i];
+                if (value === 0) {
+                    break;
+                }
+
+                message += String.fromCharCode(value);
+            }
+
+            expect(message).to.equal(expectedMessage);
+        });
+
+        it ('should write "who let the dogs out who who who " to the memory from address 128 onwards using subroutines', function() {
+            var cpu = new CPU(256),
+                expectedMessage = 'who let the dogs out who who who';
+
+            cpu.loadProgram([4, 128, 11, 32, 11, 101, 11, 45, 11, 101, 11, 58, 11, 101, 11, 71, 11, 101, 11, 88, 10, 3, 9, 11, 101, 11, 32, 6, 0, 7, -9, 0, 1, 119, 11, 106, 1, 104, 11, 106, 1, 111, 11, 106, 12, 1, 108, 11, 106, 1, 101, 11, 106, 1, 116, 11, 106, 12, 1, 116, 11, 106, 1, 104, 11, 106, 1, 101, 11, 106, 12, 1, 100, 11, 106, 1, 111, 11, 106, 1, 103, 11, 106, 1, 115, 11, 106, 12, 1, 111, 11, 106, 1, 117, 11, 106, 1, 116, 11, 106, 12, 1, 32, 11, 106, 12, 8, 5, 12]);
             cpu.execute();
 
             var message = '',

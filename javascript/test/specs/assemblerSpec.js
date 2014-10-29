@@ -162,7 +162,7 @@ describe('Assembler', function() {
         it('should use labels for branching', function() {
             var code = [
                 'LDY 3',
-                ':loop',
+                'loop:',
                 '  DEY',
                 '  CMY 0',
                 '  BNE loop',
@@ -172,6 +172,134 @@ describe('Assembler', function() {
             var machineCode = assembler.assemble(code);
 
             expect(machineCode).to.deep.equal([10, 3, 9, 6, 0, 7, -5, 0]);
+        });
+
+        it('should use labels for subroutines', function() {
+            var code = [
+                'LDA 10',
+                'JSR incABy10',
+                'BRK',
+
+                'incABy10:',
+                '  ADC 10',
+                '  RTS'
+            ].join('\n');
+
+            var machineCode = assembler.assemble(code);
+
+            expect(machineCode).to.deep.equal([1, 10, 11, 5, 0, 2, 10, 12]);
+        });
+
+        it('should use labels for nested subroutines', function() {
+            var code = [
+                'LDA 10',
+                'JSR incABy10',
+                'BRK',
+
+                'incABy10:',
+                '  ADC 10',
+                '  JSR incABy50',
+                '  RTS',
+
+                'incABy50:',
+                '  ADC 50',
+                '  RTS'
+            ].join('\n');
+
+            var machineCode = assembler.assemble(code);
+
+            expect(machineCode).to.deep.equal([1, 10, 11, 5, 0, 2, 10, 11, 10, 12, 2, 50, 12]);
+        });
+
+        it('should use labels for multiple subroutines', function() {
+            var code = [
+                'LDX 128',
+                '',
+                'JSR who',
+                'JSR space',
+                'JSR let',
+                'JSR space',
+                'JSR the',
+                'JSR space',
+                'JSR dogs',
+                'JSR space',
+                'JSR out',
+                '',
+                'LDY 3',
+                '',
+                'loop:',
+                '  DEY',
+                '  JSR space',
+                '  JSR who',
+                '  CMY 0',
+                '  BNE loop',
+                '',
+                'BRK',
+                '',
+                'who:',
+                '  LDA 119',
+                '  JSR writechar',
+                '  LDA 104',
+                '  JSR writechar',
+                '  LDA 111',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'let:',
+                '  LDA 108',
+                '  JSR writechar',
+                '  LDA 101',
+                '  JSR writechar',
+                '  LDA 116',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'the:',
+                '  LDA 116',
+                '  JSR writechar',
+                '  LDA 104',
+                '  JSR writechar',
+                '  LDA 101',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'dogs:',
+                '  LDA 100',
+                '  JSR writechar',
+                '  LDA 111',
+                '  JSR writechar',
+                '  LDA 103',
+                '  JSR writechar',
+                '  LDA 115',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'out:',
+                '  LDA 111',
+                '  JSR writechar',
+                '  LDA 117',
+                '  JSR writechar',
+                '  LDA 116',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'space:',
+                '  LDA 32',
+                '  JSR writechar',
+                '  RTS',
+                '',
+                'writechar:',
+                '  STA_X',
+                '  INX',
+                '  RTS'
+            ].join('\n');
+
+            var machineCode = assembler.assemble(code);
+
+            console.log('****');
+            console.log(machineCode.join(', '));
+
+            expect(machineCode).to.deep.equal([4, 128, 11, 32, 11, 101, 11, 45, 11, 101, 11, 58, 11, 101, 11, 71, 11, 101, 11, 88, 10, 3, 9, 11, 101, 11, 32, 6, 0, 7, -9, 0, 1, 119, 11, 106, 1, 104, 11, 106, 1, 111, 11, 106, 12, 1, 108, 11, 106, 1, 101, 11, 106, 1, 116, 11, 106, 12, 1, 116, 11, 106, 1, 104, 11, 106, 1, 101, 11, 106, 12, 1, 100, 11, 106, 1, 111, 11, 106, 1, 103, 11, 106, 1, 115, 11, 106, 12, 1, 111, 11, 106, 1, 117, 11, 106, 1, 116, 11, 106, 12, 1, 32, 11, 106, 12, 8, 5, 12]);
         });
     });
 });

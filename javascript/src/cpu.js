@@ -115,7 +115,7 @@ CPU.prototype.execute = function() {
             case 12:
                 // RTS
                 this.registers.stackPointer++;
-                this.registers.programCounter = this.memory[this.registers.stackPointer] - 1;
+                this.registers.programCounter = this.memory[this.registers.stackPointer] + 1;
                 break;
             default:
                 throw new Error('Unknown operation');

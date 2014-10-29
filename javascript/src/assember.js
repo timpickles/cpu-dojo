@@ -1,7 +1,7 @@
 var Assembler = (function() {
     var blankLineRegEx = /^\s*$/,
         operationRegEx = /^\s*(\w+)(?:\s+([\d\w-]+))?\s*$/,
-        labelRegEx = /^\s*:(\w[\w\d]+)\s*$/,
+        labelRegEx = /^\s*(\w[\w\d]+):\s*$/,
         operationMap = {
             'BRK': { opCode: 0, length: 1 },
             'LDA': { opCode: 1, length: 2 },
@@ -30,6 +30,19 @@ var Assembler = (function() {
             'RTS': { opCode: 12, length: 1 }
         },
         labelMap = {};
+
+    function updateJSRlabelsToAddresses(machineCode) {
+        var address,
+            i;
+
+        for (i = 0; i < machineCode.length; i++) {
+            address = labelMap[machineCode[i]];
+
+            if (address) {
+                machineCode[i] = address;
+            }
+        }
+    }
 
     return {
         assemble: function(assemblyCode) {
@@ -84,6 +97,8 @@ var Assembler = (function() {
                     }
                 }
             }
+
+            updateJSRlabelsToAddresses(machineCode);
 
             return machineCode;
         }
