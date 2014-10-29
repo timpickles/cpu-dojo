@@ -5,14 +5,13 @@ describe('Assembler', function() {
 
         it('should return empty array of machine code with blank input', function () {
             var code = '',
-                outputMachineCode = assembler.assemble('');
+                outputMachineCode = assembler.assemble(code);
 
             expect(outputMachineCode).to.deep.equal([]);
         });
 
         it('should return empty array of machine code with undefined input', function () {
-            var code = '',
-                outputMachineCode = assembler.assemble();
+            var outputMachineCode = assembler.assemble();
 
             expect(outputMachineCode).to.deep.equal([]);
         });
@@ -23,9 +22,31 @@ describe('Assembler', function() {
                 ''
             ].join('\n');
 
-            var outputMachineCode = assembler.assemble();
+            var outputMachineCode = assembler.assemble(code);
 
             expect(outputMachineCode).to.deep.equal([]);
+        });
+
+        it('should skip comments', function () {
+            var code = [
+                '; start of line',
+                '  ; at some point line'
+            ].join('\n');
+
+            var outputMachineCode = assembler.assemble(code);
+
+            expect(outputMachineCode).to.deep.equal([]);
+        });
+
+        it('should ignore comments after code', function () {
+            var code = [
+                'LDA 100 ; some comment',
+                '  LDA 100       ; some other comment'
+            ].join('\n');
+
+            var outputMachineCode = assembler.assemble(code);
+
+            expect(outputMachineCode).to.deep.equal([1, 100, 1, 100]);
         });
     });
 

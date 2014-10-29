@@ -1,6 +1,6 @@
 var Assembler = function() {
     var blankLineRegEx = /^\s*$/,
-        operationRegEx = /^\s*(\w+)(?:\s+([\d\w-]+))?\s*$/,
+        operationRegEx = /^\s*(\w+)(?:\s+([\d\w-]+))?\s*(?:;.*)?$/,
         labelRegEx = /^\s*(\w[\w\d]+):\s*$/,
         operationMap = {
             'BRK': { opCode: 0, length: 1 },
