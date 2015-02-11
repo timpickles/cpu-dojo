@@ -4,8 +4,7 @@ describe('Assembler', function() {
         var assembler = new Assembler();
 
         it('should return empty array of machine code with blank input', function () {
-            var code = '',
-                outputMachineCode = assembler.assemble(code);
+            var outputMachineCode = assembler.assemble('');
 
             expect(outputMachineCode).to.deep.equal([]);
         });
